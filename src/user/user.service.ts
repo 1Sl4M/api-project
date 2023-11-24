@@ -21,7 +21,7 @@ import axios from 'axios';
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly users: Repository<User>,
+    public readonly users: Repository<User>,
     @Inject(CACHE_MANAGER) private cache: Cache,
     @InjectQueue('statusUpdateQueue')
     private readonly statusUpdateQueue: Queue,

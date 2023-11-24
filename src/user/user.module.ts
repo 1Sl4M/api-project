@@ -17,8 +17,8 @@ import { CacheModule } from '@nestjs/cache-manager';
     }),
     CacheModule.register({
       store: redisStore,
-      host: '127.0.0.1', //process.env.REDIS_HOST,
-      port: 6379, //process.env.REDIS_PORT,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
     }),
   ],
   controllers: [UserController],
