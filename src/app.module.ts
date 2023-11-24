@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
+import { User } from './user/entity/user.entity';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -16,10 +19,21 @@ import { UserModule } from './user/user.module';
       username: process.env.POSTGRES_USERNAME,
       password: String(process.env.POSTGRES_PASSWORD),
       database: process.env.POSTGRES_DATABASE,
-      entities: [],
+      entities: [User],
       synchronize: true,
     }),
-    CacheModule.register({ isGlobal: true }),
+    TypeOrmModule.forFeature([User]),
+    BullModule.forRoot({
+      redis: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+      },
+    }),
+    CacheModule.register({
+      store: redisStore,
+      host: '127.0.0.1', //process.env.REDIS_HOST,
+      port: 6379, //process.env.REDIS_PORT,
+    }),
     UserModule,
   ],
   controllers: [AppController],
